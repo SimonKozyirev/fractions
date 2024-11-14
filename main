@@ -1,0 +1,160 @@
+from tkinter import *
+from tkinter import ttk
+from tkinter.ttk import *
+from tkinter.messagebox import *
+from random import *
+
+
+class Fraction:
+    def __init__(self, a, b=1):
+        if type(a) is float:
+            while round(a) != a:
+                b *= 10
+                a *= 10
+            a = int(a)
+            b = int(b)
+        self.a = a
+        if b != 0:
+            self.b = b
+        else:
+            showerror(title="error", message="division by zero")
+
+    def red(self):
+        c = self.a
+        d = self.b
+        while c % d != 0:
+            p = c % d
+            c = d
+            d = p
+        self.a = self.a // d
+        self.b = self.b // d
+
+    def __mul__(self, other):
+        if not type(other) is Fraction:
+            other = Fraction(other)
+        f = Fraction(self.a * other.a, self.b * other.b)
+        f.red()
+        return f
+
+    def __rmul__(self, other):
+        if not type(other) is Fraction:
+            other = Fraction(other)
+        f = Fraction(self.a * other.a, self.b * other.b)
+        f.red()
+        return f
+
+    def __truediv__(self, other):
+        if not type(other) is Fraction:
+            other = Fraction(other)
+
+        if other.a != 0:
+            f = Fraction(self.a * other.b, self.b * other.a)
+            f.red()
+            return f
+        else:
+            showerror(title="error", message="division by zero")
+
+    def __rtruediv__(self, other):
+        if not type(other) is Fraction:
+            other = Fraction(other)
+
+        if other.a != 0:
+            f = Fraction(self.b * other.a, self.a * other.b)
+            f.red()
+            return f
+        else:
+            showerror(title="error", message="division by zero")
+
+    def __add__(self, other):
+        if not type(other) is Fraction:
+            other = Fraction(other)
+        f = Fraction(self.a * other.b + other.a * self.b, self.b * other.b)
+        f.red()
+        return f
+
+    def __radd__(self, other):
+        if not type(other) is Fraction:
+            other = Fraction(other)
+        f = Fraction(self.a * other.b + other.a * self.b, self.b * other.b)
+        f.red()
+        return f
+
+    def __sub__(self, other):
+        if not type(other) is Fraction:
+            other = Fraction(other)
+        f = Fraction(self.a * other.b - other.a * self.b, self.b * other.b)
+        f.red()
+        return f
+
+    def __rsub__(self, other):
+        if not type(other) is Fraction:
+            other = Fraction(other)
+        f = Fraction(other.a * self.b - self.a * other.b, self.b * other.b)
+        f.red()
+        return f
+
+    def __str__(self):
+        self.red()
+        if self.b == 1:
+            return str(self.a)
+        else:
+            return str(self.a) + "/" + str(self.b)
+
+
+root = Tk()
+root.title("калькулятор")
+root.geometry("400x300")
+root.resizable(False, False)
+
+
+def button_clicked(*event):
+    try:
+        if e1.get().count("/"):
+            k = e1.get().split("/")
+            n1 = Fraction(int(k[0]), int(k[1]))
+        elif e1.get().count("."):
+            n1 = float(e1.get())
+        else:
+            n1 = int(e1.get())
+
+        if e3.get().count("/"):
+            k = e3.get().split("/")
+            n2 = Fraction(int(k[0]), int(k[1]))
+        elif e3.get().count("."):
+            n2 = float(e3.get())
+        else:
+            n2 = int(e3.get())
+
+        op = e2.get()
+        if op == '+':
+            answer = n1 + n2
+        elif op == '*':
+            answer = n1 * n2
+        elif op == '-':
+            answer = n1 - n2
+        elif op == '/':
+            answer = n1 / n2
+        else:
+            answer = "некорректная операция"
+
+
+    except:
+        answer = "некорректные данные"
+    showinfo(title="Ответ", message=answer)
+
+
+l1 = Label(text="первое число")
+l2 = Label(text="операция")
+l3 = Label(text="второе число")
+e1 = ttk.Entry()
+e3 = ttk.Entry()
+e2 = ttk.Entry()
+b = Button(text="Count", command=button_clicked)
+l1.pack(anchor="nw")
+l2.pack(anchor="n")
+l3.pack(anchor="e")
+e1.pack(anchor="w")
+e2.pack(anchor="center")
+e3.pack(anchor="e")
+b.pack(anchor="s")
+root.mainloop()
